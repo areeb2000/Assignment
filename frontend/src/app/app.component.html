@@ -1,0 +1,191 @@
+<!-- Authentication Container -->
+<div class="auth-container">
+  <!-- Authentication Card -->
+  <mat-card class="auth-card">
+    <mat-card-header class="auth-header">
+      <mat-icon class="login-icon">business</mat-icon>
+      <div>
+        <h1>ERMS</h1>
+        <h2>Employee & Recruitment Management System</h2>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content class="auth-content">
+      <!-- Login Form -->
+      <div *ngIf="!showRegister">
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email Address</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Enter your email">
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+              Email is required
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+              Please enter a valid email
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" 
+                   formControlName="password" placeholder="Enter password">
+            <button mat-icon-button matSuffix type="button" 
+                    (click)="hidePassword = !hidePassword">
+              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+              Password is required
+            </mat-error>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit" 
+                  class="full-width auth-button" [disabled]="loginForm.invalid">
+            Login
+          </button>
+        </form>
+
+        <!-- Demo Credentials -->
+        <div class="demo-credentials">
+          <h4>Demo Credentials</h4>
+          <div class="credentials-grid">
+            <div class="credential-item">
+              <strong>Super Admin:</strong><br>
+              admin@company.com / admin123
+              <button mat-stroked-button color="primary" class="quick-login-btn"
+                      (click)="quickLogin('admin@company.com', 'admin123')">
+                Quick Login
+              </button>
+            </div>
+            <div class="credential-item">
+              <strong>HR User:</strong><br>
+              hr@company.com / hr123
+              <button mat-stroked-button color="primary" class="quick-login-btn"
+                      (click)="quickLogin('hr@company.com', 'hr123')">
+                Quick Login
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-footer">
+          <p>Don't have an account?</p>
+          <button mat-button color="primary" (click)="toggleAuthMode()">
+            Register Here
+          </button>
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div *ngIf="showRegister">
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Full Name</mat-label>
+            <input matInput formControlName="fullName" placeholder="Enter your full name">
+            <mat-icon matSuffix>person</mat-icon>
+            <mat-error *ngIf="registerForm.get('fullName')?.hasError('required')">
+              Full name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email Address</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Enter your email">
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+              Email is required
+            </mat-error>
+            <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+              Please enter a valid email
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" 
+                   formControlName="password" placeholder="Enter password">
+            <button mat-icon-button matSuffix type="button" 
+                    (click)="hidePassword = !hidePassword">
+              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+              Password is required
+            </mat-error>
+            <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">
+              Password must be at least 6 characters
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>User Role</mat-label>
+            <mat-select formControlName="role">
+              <mat-option value="hr_user">HR User</mat-option>
+              <mat-option value="super_admin">Super Admin</mat-option>
+            </mat-select>
+            <mat-error *ngIf="registerForm.get('role')?.hasError('required')">
+              Role is required
+            </mat-error>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit" 
+                  class="full-width auth-button" [disabled]="registerForm.invalid">
+            Register
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <p>Already have an account?</p>
+          <button mat-button color="primary" (click)="toggleAuthMode()">
+            Login Here
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Dashboard (shown when authenticated) -->
+<ng-container *ngIf="isAuthenticated">
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport="true" 
+                 [attr.role]="'navigation'" [mode]="'side'" [opened]="true">
+      <mat-toolbar>Navigation</mat-toolbar>
+      <mat-nav-list>
+        <a mat-list-item routerLink="/dashboard">
+          <mat-icon>dashboard</mat-icon>
+          <span>Dashboard</span>
+        </a>
+        <a mat-list-item routerLink="/employees">
+          <mat-icon>people</mat-icon>
+          <span>Employees</span>
+        </a>
+        <a mat-list-item routerLink="/applications">
+          <mat-icon>work</mat-icon>
+          <span>Job Applications</span>
+        </a>
+        <a mat-list-item routerLink="/departments">
+          <mat-icon>business</mat-icon>
+          <span>Departments</span>
+        </a>
+        <a mat-list-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Logout</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <mat-toolbar color="primary">
+        <mat-toolbar-row>
+          <span>Employee & Recruitment Management System</span>
+          <span class="spacer"></span>
+          <span>Welcome, {{currentUser?.fullName}}</span>
+        </mat-toolbar-row>
+      </mat-toolbar>
+
+      <div class="main-content">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</ng-container>

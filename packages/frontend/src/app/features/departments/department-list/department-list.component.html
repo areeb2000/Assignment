@@ -1,0 +1,286 @@
+<div class="enhanced-department-container">
+  <!-- Enhanced Page Header -->
+  <div class="department-page-header">
+    <div class="header-left">
+      <div class="page-title">
+        <mat-icon class="title-icon">business</mat-icon>
+        <div class="title-content">
+          <h1>Department Administration Center</h1>
+          <p class="subtitle">Organizational Structure & Department Management</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="openDepartmentForm()"
+        class="add-department-btn">
+        <mat-icon>add_business</mat-icon>
+        <span class="btn-text-full">Create New Department</span>
+        <span class="btn-text-short">Add Dept</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Enhanced Filter & Search Section -->
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <div class="filter-row">
+        <div class="search-section">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>
+              <mat-icon>search</mat-icon>
+              <span class="label-full">Search Departments by Name or Description</span>
+              <span class="label-short">Search</span>
+            </mat-label>
+            <input 
+              matInput 
+              placeholder="Enter department name, description, or budget..."
+              (keyup)="applyFilter($event)"
+              #searchInput>
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </div>
+        
+        <div class="filter-actions">
+          <button 
+            mat-stroked-button 
+            class="filter-btn"
+            [disabled]="!searchInput.value"
+            (click)="clearSearch()">
+            <mat-icon>clear</mat-icon>
+            <span class="btn-text-full">Clear Search</span>
+            <span class="btn-text-short">Clear</span>
+          </button>
+          
+          <button 
+            mat-stroked-button 
+            class="export-btn"
+            (click)="exportDepartments()">
+            <mat-icon>download</mat-icon>
+            <span class="btn-text-full">Export Department List</span>
+            <span class="btn-text-short">Export</span>
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Enhanced Department Table -->
+  <mat-card class="table-card">
+    <div class="table-container">
+      <mat-table 
+        [dataSource]="dataSource" 
+        class="enhanced-department-table"
+        matSort>
+      
+        <!-- Department ID Column -->
+        <ng-container matColumnDef="id">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            <div class="header-content">
+              <mat-icon>tag</mat-icon>
+              <span class="header-full">Department ID</span>
+              <span class="header-short">ID</span>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let department" class="dept-id-cell">
+            <div class="department-id">DEPT-{{ department.id }}</div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Department Information Column -->
+        <ng-container matColumnDef="department_info">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            <div class="header-content">
+              <mat-icon>business</mat-icon>
+              <span class="header-full">Department Information</span>
+              <span class="header-short">Department</span>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let department" class="dept-info-cell">
+            <div class="department-name">{{ department.name }}</div>
+            <div class="department-description" 
+                 [title]="department.description">
+              {{ truncateText(department.description, 60) }}
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Manager Information Column -->
+        <ng-container matColumnDef="manager_info">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="header-content">
+              <mat-icon>person</mat-icon>
+              <span class="header-full">Department Manager</span>
+              <span class="header-short">Manager</span>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let department" class="manager-info-cell">
+            <div class="manager-details" *ngIf="department.manager; else noManager">
+              <div class="manager-name">{{ department.manager.first_name }} {{ department.manager.last_name }}</div>
+              <div class="manager-role">Department Head</div>
+            </div>
+            <ng-template #noManager>
+              <div class="no-manager-assigned">
+                <mat-icon>person_off</mat-icon>
+                <span class="no-manager-full">No Manager Assigned</span>
+                <span class="no-manager-short">Unassigned</span>
+              </div>
+            </ng-template>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Metrics Column -->
+        <ng-container matColumnDef="metrics">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            <div class="header-content">
+              <mat-icon>analytics</mat-icon>
+              <span class="header-full">Department Metrics</span>
+              <span class="header-short">Metrics</span>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let department" class="metrics-cell">
+            <div class="metric-item">
+              <mat-icon class="metric-icon">people</mat-icon>
+              <span class="metric-label-full">Total Employees:</span>
+              <span class="metric-label-short">EMP:</span>
+              <span class="metric-value">{{ department.employee_count || 0 }}</span>
+            </div>
+            <div class="budget-display">
+              <mat-icon class="budget-icon">attach_money</mat-icon>
+              <span class="budget-label-full">Annual Budget:</span>
+              <span class="budget-label-short">Budget:</span>
+              <span class="budget-amount">{{ formatCurrency(department.budget) }}</span>
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="header-content">
+              <mat-icon>fact_check</mat-icon>
+              <span class="header-full">Department Status</span>
+              <span class="header-short">Status</span>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let department" class="status-cell">
+            <div class="status-badge" 
+                 [ngClass]="getDepartmentStatusClass(department)">
+              <mat-icon class="status-icon">{{ getDepartmentStatusIcon(department) }}</mat-icon>
+              <span class="status-text-full">{{ getDepartmentStatus(department) }}</span>
+              <span class="status-text-short">{{ getDepartmentStatusShort(department) }}</span>
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Enhanced Management Actions Column -->
+        <ng-container matColumnDef="management_actions">
+          <mat-header-cell *matHeaderCellDef>
+            <div class="header-content">
+              <mat-icon>settings</mat-icon>
+              <span class="header-full">Department Management</span>
+              <span class="header-short">Actions</span>
+            </div>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let department" class="actions-cell">
+            <div class="department-management-actions">
+              <button 
+                mat-raised-button
+                class="action-btn view-btn"
+                (click)="viewDepartment(department)"
+                matTooltip="View Department Details">
+                <mat-icon>visibility</mat-icon>
+                <span class="btn-text">View</span>
+              </button>
+              
+              <button 
+                mat-raised-button
+                class="action-btn edit-btn"
+                (click)="openDepartmentForm(department)"
+                matTooltip="Edit Department Information">
+                <mat-icon>edit</mat-icon>
+                <span class="btn-text">Edit</span>
+              </button>
+              
+              <button 
+                mat-raised-button
+                class="action-btn staff-btn"
+                (click)="manageDepartmentStaff(department)"
+                matTooltip="Manage Department Staff">
+                <mat-icon>people</mat-icon>
+                <span class="btn-text">Staff</span>
+              </button>
+              
+              <button 
+                mat-raised-button
+                class="action-btn budget-btn"
+                (click)="manageDepartmentBudget(department)"
+                matTooltip="Manage Department Budget">
+                <mat-icon>account_balance</mat-icon>
+                <span class="btn-text">Budget</span>
+              </button>
+              
+              <button 
+                mat-raised-button
+                class="action-btn delete-btn"
+                (click)="deleteDepartment(department)"
+                matTooltip="Delete Department">
+                <mat-icon>delete</mat-icon>
+                <span class="btn-text">Delete</span>
+              </button>
+            </div>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Header and Row Definitions -->
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row 
+          *matRowDef="let row; columns: displayedColumns;"
+          class="enhanced-department-row"
+          (click)="selectDepartment(row)"
+          [ngClass]="{ 'selected': selectedDepartment?.id === row.id }">
+        </mat-row>
+      </mat-table>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="loading-container">
+        <div class="loading-content">
+          <mat-spinner diameter="50"></mat-spinner>
+          <h3>Loading Departments</h3>
+          <p>Please wait while we fetch department information...</p>
+        </div>
+      </div>
+
+      <!-- No Data State -->
+      <div *ngIf="!loading && dataSource.data.length === 0" class="no-data">
+        <mat-icon>business_center</mat-icon>
+        <h3>No Departments Found</h3>
+        <p>Get started by creating your first organizational department. Departments help structure your organization and manage employee assignments effectively.</p>
+        <button 
+          mat-raised-button 
+          (click)="openDepartmentForm()">
+          <mat-icon>add_business</mat-icon>
+          Create First Department
+        </button>
+      </div>
+    </div>
+
+    <!-- Table Footer -->
+    <div class="table-footer" *ngIf="!loading && dataSource.data.length > 0">
+      <div class="footer-info">
+        <span class="department-count">
+          Total Departments: <strong>{{ dataSource.data.length }}</strong>
+        </span>
+      </div>
+      <div class="footer-actions">
+        <button mat-button class="footer-btn" (click)="exportDepartments()">
+          <mat-icon>download</mat-icon>
+          Export All
+        </button>
+      </div>
+    </div>
+  </mat-card>
+</div>

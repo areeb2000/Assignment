@@ -1,0 +1,192 @@
+<div class="employee-form-container">
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <h2 mat-dialog-title>
+      <mat-icon>{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
+      {{ isEditMode ? 'Edit Employee' : 'Add New Employee' }}
+    </h2>
+    <button 
+      mat-icon-button 
+      mat-dialog-close
+      aria-label="Close dialog">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Form Content -->
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Personal Information Section -->
+      <div class="form-section">
+        <h3 class="section-title">Personal Information</h3>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>First Name</mat-label>
+            <input 
+              matInput 
+              formControlName="first_name"
+              placeholder="Enter first name">
+            <mat-error>{{ getErrorMessage('first_name') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Last Name</mat-label>
+            <input 
+              matInput 
+              formControlName="last_name"
+              placeholder="Enter last name">
+            <mat-error>{{ getErrorMessage('last_name') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Email</mat-label>
+            <input 
+              matInput 
+              type="email"
+              formControlName="email"
+              placeholder="Enter email address">
+            <mat-error>{{ getErrorMessage('email') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Phone</mat-label>
+            <input 
+              matInput 
+              formControlName="phone"
+              placeholder="Enter phone number">
+            <mat-error>{{ getErrorMessage('phone') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Date of Birth</mat-label>
+            <input 
+              matInput 
+              type="date"
+              formControlName="date_of_birth">
+            <mat-error>{{ getErrorMessage('date_of_birth') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Address</mat-label>
+            <textarea 
+              matInput 
+              formControlName="address"
+              placeholder="Enter full address"
+              rows="2">
+            </textarea>
+            <mat-error>{{ getErrorMessage('address') }}</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Employment Information Section -->
+      <div class="form-section">
+        <h3 class="section-title">Employment Information</h3>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Role</mat-label>
+            <input 
+              matInput 
+              formControlName="role"
+              placeholder="Enter job role">
+            <mat-error>{{ getErrorMessage('role') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Department</mat-label>
+            <mat-select formControlName="department_id">
+              <mat-option *ngFor="let dept of departments" [value]="dept.id">
+                {{ dept.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error>{{ getErrorMessage('department_id') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Salary</mat-label>
+            <input 
+              matInput 
+              type="number"
+              formControlName="salary"
+              placeholder="Enter salary">
+            <mat-error>{{ getErrorMessage('salary') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Hire Date</mat-label>
+            <input 
+              matInput 
+              type="date"
+              formControlName="hire_date">
+            <mat-error>{{ getErrorMessage('hire_date') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option value="active">Active</mat-option>
+              <mat-option value="inactive">Inactive</mat-option>
+              <mat-option value="terminated">Terminated</mat-option>
+            </mat-select>
+            <mat-error>{{ getErrorMessage('status') }}</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Emergency Contact Section -->
+      <div class="form-section">
+        <h3 class="section-title">Emergency Contact</h3>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Emergency Contact Name</mat-label>
+            <input 
+              matInput 
+              formControlName="emergency_contact_name"
+              placeholder="Enter emergency contact name">
+            <mat-error>{{ getErrorMessage('emergency_contact_name') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Emergency Contact Phone</mat-label>
+            <input 
+              matInput 
+              formControlName="emergency_contact_phone"
+              placeholder="Enter emergency contact phone">
+            <mat-error>{{ getErrorMessage('emergency_contact_phone') }}</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Dialog Actions -->
+  <div mat-dialog-actions class="dialog-actions">
+    <button 
+      mat-button 
+      type="button" 
+      (click)="onCancel()">
+      Cancel
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      [disabled]="loading || employeeForm.invalid"
+      (click)="onSubmit()">
+      <mat-spinner 
+        *ngIf="loading" 
+        diameter="20" 
+        class="button-spinner">
+      </mat-spinner>
+      <span>{{ isEditMode ? 'Update' : 'Create' }} Employee</span>
+    </button>
+  </div>
+</div>

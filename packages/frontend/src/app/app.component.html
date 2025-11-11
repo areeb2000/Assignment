@@ -1,0 +1,339 @@
+﻿<!-- Authenticated View - Main Application -->
+<div class="app-container" *ngIf="isAuthenticated$ | async; else loginView">
+  
+  <!-- Main Navigation Header -->
+  <mat-toolbar class="main-toolbar" color="primary">
+    <button 
+      mat-icon-button 
+      (click)="drawer.toggle()" 
+      class="menu-button"
+      matTooltip="Toggle Navigation"
+      matTooltipPosition="below">
+      <mat-icon>menu</mat-icon>
+    </button>
+    
+    <span class="app-title">{{ title }}</span>
+    
+    <span class="spacer"></span>
+    
+    <!-- User Menu -->
+    <div class="user-menu" *ngIf="currentUser$ | async as user">
+      <div class="user-info">
+        <mat-icon class="user-avatar">account_circle</mat-icon>
+        <div class="user-details">
+          <span class="username">{{ user.username }}</span>
+          <span class="user-role">{{ user.role | titlecase }}</span>
+        </div>
+      </div>
+      
+      <button 
+        mat-icon-button 
+        [matMenuTriggerFor]="userMenu" 
+        class="user-menu-trigger"
+        matTooltip="User Menu"
+        matTooltipPosition="below">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      
+      <mat-menu #userMenu="matMenu" xPosition="before">
+        <div class="user-menu-header">
+          <mat-icon>person</mat-icon>
+          <div class="user-menu-info">
+            <span class="menu-username">{{ user.username }}</span>
+            <span class="menu-role">{{ user.role | titlecase }}</span>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Sign Out</span>
+        </button>
+      </mat-menu>
+    </div>
+  </mat-toolbar>
+
+  <!-- Side Navigation -->
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav 
+      #drawer 
+      class="sidenav" 
+      fixedInViewport="true" 
+      mode="side" 
+      opened="true"
+      disableClose="false">
+      
+      <!-- Navigation Header -->
+      <div class="sidenav-header">
+        <div class="logo-container">
+          <mat-icon class="app-logo">business_center</mat-icon>
+          <span class="app-name">ERMS</span>
+        </div>
+        <span class="app-subtitle">Employee & Recruitment</span>
+      </div>
+
+      <mat-nav-list class="navigation-list">
+        <!-- Main Navigation -->
+        <h3 matSubheader class="nav-section-title">
+          <mat-icon>dashboard</mat-icon>
+          Main Menu
+        </h3>
+        
+        <a mat-list-item 
+           routerLink="/dashboard" 
+           routerLinkActive="active-link"
+           class="nav-item">
+          <mat-icon matListItemIcon>dashboard</mat-icon>
+          <span matListItemTitle>Dashboard</span>
+          <mat-icon class="nav-arrow" *ngIf="false">chevron_right</mat-icon>
+        </a>
+
+        <!-- HR Management Section -->
+        <h3 matSubheader class="nav-section-title">
+          <mat-icon>people</mat-icon>
+          HR Management
+        </h3>
+        
+        <a mat-list-item 
+           routerLink="/employees" 
+           routerLinkActive="active-link"
+           class="nav-item">
+          <mat-icon matListItemIcon>people</mat-icon>
+          <span matListItemTitle>Employees</span>
+          <mat-icon class="nav-arrow" *ngIf="false">chevron_right</mat-icon>
+        </a>
+
+        <a mat-list-item 
+           routerLink="/departments" 
+           routerLinkActive="active-link"
+           class="nav-item">
+          <mat-icon matListItemIcon>business</mat-icon>
+          <span matListItemTitle>Departments</span>
+          <mat-icon class="nav-arrow" *ngIf="false">chevron_right</mat-icon>
+        </a>
+
+        <!-- Recruitment Section -->
+        <h3 matSubheader class="nav-section-title">
+          <mat-icon>work</mat-icon>
+          Recruitment
+        </h3>
+        
+        <a mat-list-item 
+           routerLink="/applications" 
+           routerLinkActive="active-link"
+           class="nav-item">
+          <mat-icon matListItemIcon>work</mat-icon>
+          <span matListItemTitle>Job Applications</span>
+          <mat-icon class="nav-arrow" *ngIf="false">chevron_right</mat-icon>
+        </a>
+
+        <a mat-list-item 
+           routerLink="/documents" 
+           routerLinkActive="active-link"
+           class="nav-item">
+          <mat-icon matListItemIcon>folder</mat-icon>
+          <span matListItemTitle>Documents</span>
+          <mat-icon class="nav-arrow" *ngIf="false">chevron_right</mat-icon>
+        </a>
+
+        <!-- Admin Section (Super Admin Only) -->
+        <div *ngIf="(currentUser$ | async)?.role === 'super_admin'">
+          <mat-divider class="section-divider"></mat-divider>
+          <h3 matSubheader class="nav-section-title">
+            <mat-icon>admin_panel_settings</mat-icon>
+            Administration
+          </h3>
+          
+          <a mat-list-item 
+             routerLink="/admin/users" 
+             routerLinkActive="active-link"
+             class="nav-item">
+            <mat-icon matListItemIcon>admin_panel_settings</mat-icon>
+            <span matListItemTitle>User Management</span>
+            <mat-icon class="nav-arrow" *ngIf="false">chevron_right</mat-icon>
+          </a>
+
+          <a mat-list-item 
+             routerLink="/admin/system" 
+             routerLinkActive="active-link"
+             class="nav-item">
+            <mat-icon matListItemIcon>settings</mat-icon>
+            <span matListItemTitle>System Settings</span>
+            <mat-icon class="nav-arrow" *ngIf="false">chevron_right</mat-icon>
+          </a>
+        </div>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Main Content Area -->
+    <mat-sidenav-content class="main-content">
+      <div class="content-wrapper">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
+
+<!-- Login View Template -->
+<ng-template #loginView>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <mat-icon class="login-icon">business</mat-icon>
+        <h1>ERMS</h1>
+        <h2>Employee & Recruitment Management System</h2>
+      </div>
+
+      <mat-card class="auth-card">
+        <mat-card-content>
+          <!-- Login Form -->
+          <div *ngIf="!showRegister">
+            <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email Address</mat-label>
+                <input matInput type="email" formControlName="email" placeholder="admin@company.com">
+                <mat-icon matSuffix>email</mat-icon>
+                <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+                  Email is required
+                </mat-error>
+                <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+                  Please enter a valid email
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" 
+                       formControlName="password" placeholder="">
+                <button mat-icon-button matSuffix type="button" 
+                        (click)="hidePassword = !hidePassword">
+                  <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                  Password is required
+                </mat-error>
+              </mat-form-field>
+
+              <button mat-raised-button color="primary" type="submit" 
+                      class="full-width auth-button" 
+                      [disabled]="loginForm.invalid || isLoading">
+                <mat-icon *ngIf="isLoading" class="loading-icon">hourglass_empty</mat-icon>
+                <span *ngIf="!isLoading">Login</span>
+                <span *ngIf="isLoading">Signing In...</span>
+              </button>
+            </form>
+
+            <!-- Quick Login Demo -->
+            <div class="demo-section">
+              <mat-divider></mat-divider>
+              <h3>Quick Login for Demo</h3>
+              <div class="demo-buttons">
+                <button mat-stroked-button (click)="quickLogin('admin')" class="demo-button">
+                  <mat-icon>admin_panel_settings</mat-icon>
+                  Super Admin Login
+                </button>
+                <button mat-stroked-button (click)="quickLogin('hr')" class="demo-button">
+                  <mat-icon>people</mat-icon>
+                  HR User Login
+                </button>
+              </div>
+            </div>
+
+            <!-- Register Link -->
+            <div class="auth-footer">
+              <p>Don't have an account? 
+                <button mat-button color="primary" (click)="toggleAuthMode()">
+                  Create Account
+                </button>
+              </p>
+            </div>
+          </div>
+
+          <!-- Register Form -->
+          <div *ngIf="showRegister">
+            <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Username</mat-label>
+                <input matInput formControlName="username" placeholder="Enter username">
+                <mat-icon matSuffix>person</mat-icon>
+                <mat-error *ngIf="registerForm.get('username')?.hasError('required')">
+                  Username is required
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email Address</mat-label>
+                <input matInput type="email" formControlName="email" placeholder="Enter email">
+                <mat-icon matSuffix>email</mat-icon>
+                <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
+                  Email is required
+                </mat-error>
+                <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
+                  Please enter a valid email
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" 
+                       formControlName="password" placeholder="Enter password">
+                <button mat-icon-button matSuffix type="button" 
+                        (click)="hidePassword = !hidePassword">
+                  <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+                <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+                  Password is required
+                </mat-error>
+                <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">
+                  Password must be at least 6 characters
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Role</mat-label>
+                <mat-select formControlName="role">
+                  <mat-option value="hr_user">HR User</mat-option>
+                  <mat-option value="super_admin">Super Admin</mat-option>
+                </mat-select>
+                <mat-error *ngIf="registerForm.get('role')?.hasError('required')">
+                  Role is required
+                </mat-error>
+              </mat-form-field>
+
+              <button mat-raised-button color="primary" type="submit" 
+                      class="full-width auth-button" 
+                      [disabled]="registerForm.invalid || isLoading">
+                <mat-icon *ngIf="isLoading" class="loading-icon">hourglass_empty</mat-icon>
+                <span *ngIf="!isLoading">Create Account</span>
+                <span *ngIf="isLoading">Creating Account...</span>
+              </button>
+            </form>
+
+            <!-- Login Link -->
+            <div class="auth-footer">
+              <p>Already have an account? 
+                <button mat-button color="primary" (click)="toggleAuthMode()">
+                  Sign In
+                </button>
+              </p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Demo Credentials Info -->
+      <div class="demo-info">
+        <h3>Demo Credentials</h3>
+        <div class="credentials">
+          <div class="credential-item">
+            <strong>Super Admin:</strong><br>
+            admin@company.com / admin123
+          </div>
+          <div class="credential-item">
+            <strong>HR User:</strong><br>
+            hr@company.com / hr123
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

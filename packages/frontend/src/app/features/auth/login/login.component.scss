@@ -1,0 +1,232 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  
+  .login-card {
+    width: 100%;
+    max-width: 480px;
+    
+    .mat-mdc-card {
+      padding: 0;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      
+      .login-header {
+        background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+        color: white;
+        padding: 32px 24px 24px;
+        border-radius: 16px 16px 0 0;
+        text-align: center;
+        
+        .app-title {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          font-size: 28px;
+          font-weight: 600;
+          margin: 0;
+          
+          .app-icon {
+            font-size: 32px;
+            width: 32px;
+            height: 32px;
+          }
+        }
+        
+        .mat-mdc-card-subtitle {
+          color: rgba(255, 255, 255, 0.8);
+          margin-top: 8px;
+          font-size: 14px;
+        }
+      }
+      
+      .mat-mdc-card-content {
+        padding: 32px 24px 24px;
+        
+        .form-group {
+          margin-bottom: 24px;
+          
+          .mat-mdc-form-field {
+            .mat-mdc-text-field-wrapper {
+              border-radius: 8px;
+            }
+          }
+        }
+        
+        .form-actions {
+          margin: 32px 0 24px;
+          
+          .login-button {
+            height: 48px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            
+            .mat-mdc-progress-spinner {
+              margin-right: 8px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.quick-login-section {
+  margin: 24px 0;
+  
+  .divider {
+    margin: 24px 0 16px;
+  }
+  
+  .quick-login-title {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin: 0 0 16px;
+  }
+  
+  .quick-login-buttons {
+    display: flex;
+    gap: 12px;
+    
+    .quick-login-btn {
+      flex: 1;
+      height: 40px;
+      border-radius: 8px;
+      
+      mat-icon {
+        margin-right: 8px;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+.register-section {
+  text-align: center;
+  margin-top: 16px;
+  
+  .register-text {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+    
+    .register-link {
+      color: #1976d2;
+      text-decoration: none;
+      font-weight: 500;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.demo-info {
+  margin-top: 24px;
+  
+  .info-card {
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    
+    h4 {
+      margin: 0 0 16px;
+      color: #333;
+      font-size: 16px;
+      text-align: center;
+    }
+    
+    .credentials-info {
+      .credential-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+        
+        &:last-child {
+          border-bottom: none;
+        }
+        
+        strong {
+          color: #333;
+          font-size: 14px;
+        }
+        
+        span {
+          color: #666;
+          font-size: 13px;
+          font-family: monospace;
+        }
+      }
+    }
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.is-invalid {
+  border-color: #f44336;
+}
+
+// Responsive design
+@media (max-width: 480px) {
+  .login-container {
+    padding: 12px;
+    
+    .login-card {
+      .mat-mdc-card {
+        .login-header {
+          padding: 24px 16px 16px;
+          
+          .app-title {
+            font-size: 24px;
+            
+            .app-icon {
+              font-size: 28px;
+              width: 28px;
+              height: 28px;
+            }
+          }
+        }
+        
+        .mat-mdc-card-content {
+          padding: 24px 16px 16px;
+        }
+      }
+    }
+  }
+  
+  .quick-login-buttons {
+    flex-direction: column;
+    
+    .quick-login-btn {
+      width: 100%;
+    }
+  }
+}
+
+// Success and error snackbar styles
+::ng-deep {
+  .success-snackbar {
+    background-color: #4caf50 !important;
+    color: white !important;
+  }
+  
+  .error-snackbar {
+    background-color: #f44336 !important;
+    color: white !important;
+  }
+}

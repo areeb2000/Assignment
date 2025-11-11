@@ -1,0 +1,242 @@
+<div class="application-form-container">
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <h2 mat-dialog-title>
+      <mat-icon>{{ isEditMode ? 'edit' : 'assignment_ind' }}</mat-icon>
+      {{ isEditMode ? 'Edit Application' : 'New Job Application' }}
+    </h2>
+    <button 
+      mat-icon-button 
+      mat-dialog-close
+      aria-label="Close dialog">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Form Content -->
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Personal Information Section -->
+      <div class="form-section">
+        <h3 class="section-title">Personal Information</h3>
+        
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>First Name</mat-label>
+            <input 
+              matInput 
+              formControlName="first_name"
+              placeholder="Enter first name">
+            <mat-icon matSuffix>person</mat-icon>
+            <mat-error>{{ getErrorMessage('first_name') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Last Name</mat-label>
+            <input 
+              matInput 
+              formControlName="last_name"
+              placeholder="Enter last name">
+            <mat-icon matSuffix>person</mat-icon>
+            <mat-error>{{ getErrorMessage('last_name') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Email Address</mat-label>
+            <input 
+              matInput 
+              type="email"
+              formControlName="email"
+              placeholder="Enter email address">
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-error>{{ getErrorMessage('email') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Phone Number</mat-label>
+            <input 
+              matInput 
+              type="tel"
+              formControlName="phone"
+              placeholder="Enter phone number">
+            <mat-icon matSuffix>phone</mat-icon>
+            <mat-error>{{ getErrorMessage('phone') }}</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Job Information Section -->
+      <div class="form-section">
+        <h3 class="section-title">Job Information</h3>
+        
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field full-width">
+            <mat-label>Position Applied For</mat-label>
+            <mat-select formControlName="job_role_id">
+              <mat-optgroup *ngFor="let department of getJobRolesByDepartment() | keyvalue" [label]="department.key">
+                <mat-option *ngFor="let jobRole of department.value" [value]="jobRole.id">
+                  {{ jobRole.title }}
+                  <span class="job-description" *ngIf="jobRole.description"> - {{ jobRole.description }}</span>
+                </mat-option>
+              </mat-optgroup>
+            </mat-select>
+            <mat-icon matSuffix>work</mat-icon>
+            <mat-error>{{ getErrorMessage('job_role_id') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Years of Experience</mat-label>
+            <input 
+              matInput 
+              type="number"
+              min="0"
+              max="50"
+              formControlName="experience_years"
+              placeholder="Enter years of experience">
+            <mat-icon matSuffix>trending_up</mat-icon>
+            <mat-error>{{ getErrorMessage('experience_years') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Application Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option *ngFor="let status of getStatusOptions()" [value]="status.value">
+                <span class="status-option" [style.color]="status.color">
+                  {{ status.label }}
+                </span>
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>flag</mat-icon>
+            <mat-error>{{ getErrorMessage('status') }}</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Application Details Section -->
+      <div class="form-section">
+        <h3 class="section-title">Application Details</h3>
+        
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Applied Date</mat-label>
+            <input 
+              matInput 
+              type="date"
+              formControlName="applied_date">
+            <mat-icon matSuffix>date_range</mat-icon>
+            <mat-error>{{ getErrorMessage('applied_date') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Interview Date</mat-label>
+            <input 
+              matInput 
+              type="date"
+              formControlName="interview_date">
+            <mat-icon matSuffix>schedule</mat-icon>
+            <mat-hint>Optional - only if interview is scheduled</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field full-width resume-field">
+            <mat-label>Resume</mat-label>
+            <input 
+              matInput 
+              formControlName="resume_url"
+              placeholder="Resume file name"
+              readonly>
+            <button 
+              mat-icon-button 
+              matSuffix
+              type="button"
+              (click)="fileInput.click()"
+              matTooltip="Upload Resume">
+              <mat-icon>upload_file</mat-icon>
+            </button>
+            <button 
+              mat-icon-button 
+              matSuffix
+              type="button"
+              (click)="clearResume()"
+              *ngIf="applicationForm.get('resume_url')?.value"
+              matTooltip="Clear Resume">
+              <mat-icon>clear</mat-icon>
+            </button>
+            <input 
+              #fileInput
+              type="file" 
+              accept=".pdf,.doc,.docx"
+              (change)="onResumeUpload($event)"
+              style="display: none;">
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field full-width">
+            <mat-label>Cover Letter</mat-label>
+            <textarea 
+              matInput 
+              formControlName="cover_letter"
+              placeholder="Enter cover letter or additional notes"
+              rows="4">
+            </textarea>
+            <mat-icon matSuffix>description</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field full-width">
+            <mat-label>Notes</mat-label>
+            <textarea 
+              matInput 
+              formControlName="notes"
+              placeholder="Internal notes about the candidate"
+              rows="3">
+            </textarea>
+            <mat-icon matSuffix>note</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Job Role Details -->
+      <div class="selected-job-info" *ngIf="getSelectedJobRole()">
+        <h4>Selected Position Details</h4>
+        <div class="job-details">
+          <div class="job-title">{{ getSelectedJobRole()?.title }}</div>
+          <div class="job-department">{{ getSelectedJobRole()?.department_name }}</div>
+          <div class="job-description" *ngIf="getSelectedJobRole()?.description">
+            {{ getSelectedJobRole()?.description }}
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Dialog Actions -->
+  <div mat-dialog-actions class="dialog-actions">
+    <button 
+      mat-button 
+      type="button" 
+      (click)="onCancel()">
+      Cancel
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      [disabled]="loading || applicationForm.invalid"
+      (click)="onSubmit()">
+      <mat-spinner 
+        *ngIf="loading" 
+        diameter="20" 
+        class="button-spinner">
+      </mat-spinner>
+      <span>{{ isEditMode ? 'Update' : 'Submit' }} Application</span>
+    </button>
+  </div>
+</div>

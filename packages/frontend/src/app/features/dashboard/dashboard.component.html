@@ -1,0 +1,417 @@
+<div class="enhanced-dashboard-container">
+  <!-- Main Dashboard Header with Modern Design -->
+  <div class="dashboard-header-enhanced">
+    <div class="header-left">
+      <div class="page-title">
+        <mat-icon class="title-icon">dashboard</mat-icon>
+        <div class="title-content">
+          <h1>Employee & Recruitment Management System</h1>
+          <p class="subtitle">Comprehensive Dashboard Overview</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-right" *ngIf="currentUser">
+      <div class="user-profile-section">
+        <div class="user-info">
+          <div class="user-details">
+            <span class="user-name">{{ currentUser.username }}</span>
+            <span class="user-title">{{ getRoleDisplayName(currentUser.role) }}</span>
+          </div>
+          <mat-icon class="profile-avatar">account_circle</mat-icon>
+        </div>
+        
+        <div class="role-badge-section">
+          <mat-chip class="role-badge" 
+                   [ngClass]="getRoleClass(currentUser.role)"
+                   selected>
+            <mat-icon class="role-icon">{{ getRoleIcon(currentUser.role) }}</mat-icon>
+            <span class="role-full">{{ getRoleDisplayName(currentUser.role) }}</span>
+            <span class="role-short">{{ getRoleShortName(currentUser.role) }}</span>
+          </mat-chip>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Key Performance Indicators -->
+  <div class="kpi-section">
+    <h2 class="section-title">
+      <mat-icon>analytics</mat-icon>
+      <span class="title-full">Key Performance Indicators</span>
+      <span class="title-short">KPI Overview</span>
+    </h2>
+    
+    <div class="enhanced-metrics-grid">
+      <!-- Total Employees Metric -->
+      <mat-card class="enhanced-metric-card employees-metric" (click)="navigateToEmployees()">
+        <mat-card-content>
+          <div class="metric-header">
+            <div class="metric-icon-container employees-icon">
+              <mat-icon class="primary-icon">people</mat-icon>
+              <mat-icon class="secondary-icon">trending_up</mat-icon>
+            </div>
+            <div class="metric-actions">
+              <button mat-icon-button class="action-btn">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </div>
+          </div>
+          
+          <div class="metric-body">
+            <div class="metric-numbers">
+              <h3 class="metric-value">{{ dashboardStats.totalEmployees || 0 }}</h3>
+              <div class="metric-trend positive">
+                <mat-icon>trending_up</mat-icon>
+                <span>+12% this month</span>
+              </div>
+            </div>
+            
+            <div class="metric-labels">
+              <p class="metric-label-full">Total Active Employees</p>
+              <p class="metric-label-short">Employees</p>
+              <span class="metric-description">Currently employed staff members</span>
+            </div>
+          </div>
+          
+          <div class="metric-footer">
+            <div class="progress-indicator">
+              <mat-progress-bar mode="determinate" [value]="75" color="primary"></mat-progress-bar>
+              <span class="progress-text">75% capacity</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Total Applications Metric -->
+      <mat-card class="enhanced-metric-card applications-metric" (click)="navigateToApplications()">
+        <mat-card-content>
+          <div class="metric-header">
+            <div class="metric-icon-container applications-icon">
+              <mat-icon class="primary-icon">work</mat-icon>
+              <mat-icon class="secondary-icon">inbox</mat-icon>
+            </div>
+            <div class="metric-actions">
+              <button mat-icon-button class="action-btn">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </div>
+          </div>
+          
+          <div class="metric-body">
+            <div class="metric-numbers">
+              <h3 class="metric-value">{{ dashboardStats.totalApplicants || 0 }}</h3>
+              <div class="metric-trend neutral">
+                <mat-icon>remove</mat-icon>
+                <span>No change</span>
+              </div>
+            </div>
+            
+            <div class="metric-labels">
+              <p class="metric-label-full">Job Applications Received</p>
+              <p class="metric-label-short">Applications</p>
+              <span class="metric-description">Pending & processed applications</span>
+            </div>
+          </div>
+          
+          <div class="metric-footer">
+            <div class="progress-indicator">
+              <mat-progress-bar mode="determinate" [value]="60" color="accent"></mat-progress-bar>
+              <span class="progress-text">60% reviewed</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Departments Metric -->
+      <mat-card class="enhanced-metric-card departments-metric" (click)="navigateToDepartments()">
+        <mat-card-content>
+          <div class="metric-header">
+            <div class="metric-icon-container departments-icon">
+              <mat-icon class="primary-icon">business</mat-icon>
+              <mat-icon class="secondary-icon">account_tree</mat-icon>
+            </div>
+            <div class="metric-actions">
+              <button mat-icon-button class="action-btn">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </div>
+          </div>
+          
+          <div class="metric-body">
+            <div class="metric-numbers">
+              <h3 class="metric-value">{{ dashboardStats.departmentCount || 0 }}</h3>
+              <div class="metric-trend positive">
+                <mat-icon>trending_up</mat-icon>
+                <span>+2 new depts</span>
+              </div>
+            </div>
+            
+            <div class="metric-labels">
+              <p class="metric-label-full">Organizational Departments</p>
+              <p class="metric-label-short">Departments</p>
+              <span class="metric-description">Active business units</span>
+            </div>
+          </div>
+          
+          <div class="metric-footer">
+            <div class="progress-indicator">
+              <mat-progress-bar mode="determinate" [value]="90" color="warn"></mat-progress-bar>
+              <span class="progress-text">90% active</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Job Roles Metric -->
+      <mat-card class="enhanced-metric-card job-roles-metric" (click)="navigateToJobRoles()">
+        <mat-card-content>
+          <div class="metric-header">
+            <div class="metric-icon-container job-roles-icon">
+              <mat-icon class="primary-icon">assignment</mat-icon>
+              <mat-icon class="secondary-icon">work_outline</mat-icon>
+            </div>
+            <div class="metric-actions">
+              <button mat-icon-button class="action-btn">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </div>
+          </div>
+          
+          <div class="metric-body">
+            <div class="metric-numbers">
+              <h3 class="metric-value">{{ dashboardStats.activeJobRoles || 0 }}</h3>
+              <div class="metric-trend positive">
+                <mat-icon>trending_up</mat-icon>
+                <span>+5 new roles</span>
+              </div>
+            </div>
+            
+            <div class="metric-labels">
+              <p class="metric-label-full">Active Job Positions Available</p>
+              <p class="metric-label-short">Job Roles</p>
+              <span class="metric-description">Open positions for hiring</span>
+            </div>
+          </div>
+          
+          <div class="metric-footer">
+            <div class="progress-indicator">
+              <mat-progress-bar mode="determinate" [value]="45" color="primary"></mat-progress-bar>
+              <span class="progress-text">45% filled</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Enhanced Quick Actions with Categories -->
+  <div class="enhanced-quick-actions-section">
+    <h2 class="section-title">
+      <mat-icon>flash_on</mat-icon>
+      <span class="title-full">Quick Access Panel</span>
+      <span class="title-short">Quick Actions</span>
+    </h2>
+    
+    <!-- Primary Actions -->
+    <div class="action-categories">
+      <div class="action-category primary-actions">
+        <h3 class="category-title">
+          <mat-icon>star</mat-icon>
+          <span class="category-full">Primary Operations</span>
+          <span class="category-short">Primary</span>
+        </h3>
+        
+        <div class="enhanced-actions-grid">
+          <button mat-raised-button 
+                  color="primary" 
+                  routerLink="/employees" 
+                  class="enhanced-action-button employees-action">
+            <div class="action-icon-container">
+              <mat-icon class="primary-icon">people</mat-icon>
+              <mat-icon class="secondary-icon">settings</mat-icon>
+            </div>
+            <div class="action-content">
+              <span class="action-title-full">Employee Management System</span>
+              <span class="action-title-short">Employees</span>
+              <span class="action-description">Manage staff records & profiles</span>
+            </div>
+            <mat-icon class="action-arrow">arrow_forward</mat-icon>
+          </button>
+          
+          <button mat-raised-button 
+                  color="accent" 
+                  routerLink="/applications" 
+                  class="enhanced-action-button applications-action">
+            <div class="action-icon-container">
+              <mat-icon class="primary-icon">work</mat-icon>
+              <mat-icon class="secondary-icon">inbox</mat-icon>
+            </div>
+            <div class="action-content">
+              <span class="action-title-full">Job Application Center</span>
+              <span class="action-title-short">Applications</span>
+              <span class="action-description">Review & process applications</span>
+            </div>
+            <mat-icon class="action-arrow">arrow_forward</mat-icon>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Secondary Actions -->
+      <div class="action-category secondary-actions">
+        <h3 class="category-title">
+          <mat-icon>business_center</mat-icon>
+          <span class="category-full">Organizational Management</span>
+          <span class="category-short">Organization</span>
+        </h3>
+        
+        <div class="enhanced-actions-grid">
+          <button mat-raised-button 
+                  routerLink="/departments" 
+                  class="enhanced-action-button departments-action">
+            <div class="action-icon-container">
+              <mat-icon class="primary-icon">business</mat-icon>
+              <mat-icon class="secondary-icon">account_tree</mat-icon>
+            </div>
+            <div class="action-content">
+              <span class="action-title-full">Department Administration</span>
+              <span class="action-title-short">Departments</span>
+              <span class="action-description">Configure organizational structure</span>
+            </div>
+            <mat-icon class="action-arrow">arrow_forward</mat-icon>
+          </button>
+          
+          <button mat-raised-button 
+                  routerLink="/documents" 
+                  class="enhanced-action-button documents-action">
+            <div class="action-icon-container">
+              <mat-icon class="primary-icon">folder_open</mat-icon>
+              <mat-icon class="secondary-icon">cloud_upload</mat-icon>
+            </div>
+            <div class="action-content">
+              <span class="action-title-full">Document Management System</span>
+              <span class="action-title-short">Documents</span>
+              <span class="action-description">Upload & organize files</span>
+            </div>
+            <mat-icon class="action-arrow">arrow_forward</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced System Status & Feature Overview -->
+  <div class="system-overview-section">
+    <div class="overview-grid">
+      <!-- System Status Card -->
+      <mat-card class="status-card system-status">
+        <mat-card-header>
+          <mat-card-title class="status-title">
+            <mat-icon class="status-icon">monitoring</mat-icon>
+            <span class="title-full">System Status & Health</span>
+            <span class="title-short">System Status</span>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="status-indicators">
+            <div class="status-item">
+              <mat-icon class="status-dot online">circle</mat-icon>
+              <span class="status-label-full">Authentication Service</span>
+              <span class="status-label-short">Auth</span>
+              <span class="status-value">Online</span>
+            </div>
+            
+            <div class="status-item">
+              <mat-icon class="status-dot online">circle</mat-icon>
+              <span class="status-label-full">Database Connection</span>
+              <span class="status-label-short">DB</span>
+              <span class="status-value">Connected</span>
+            </div>
+            
+            <div class="status-item">
+              <mat-icon class="status-dot online">circle</mat-icon>
+              <span class="status-label-full">Employee Management</span>
+              <span class="status-label-short">EMP</span>
+              <span class="status-value">Active</span>
+            </div>
+            
+            <div class="status-item">
+              <mat-icon class="status-dot online">circle</mat-icon>
+              <span class="status-label-full">Application Processing</span>
+              <span class="status-label-short">APP</span>
+              <span class="status-value">Ready</span>
+            </div>
+          </div>
+          
+          <div class="system-note">
+            <mat-icon class="note-icon">info</mat-icon>
+            <p class="note-text-full">All core systems operational. Ready for production use.</p>
+            <p class="note-text-short">All systems operational</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Features Overview Card -->
+      <mat-card class="status-card features-overview">
+        <mat-card-header>
+          <mat-card-title class="status-title">
+            <mat-icon class="status-icon">dashboard</mat-icon>
+            <span class="title-full">Feature Implementation Status</span>
+            <span class="title-short">Features</span>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="features-progress">
+            <div class="feature-item completed">
+              <mat-icon class="feature-status">check_circle</mat-icon>
+              <div class="feature-info">
+                <span class="feature-name-full">User Authentication & Authorization</span>
+                <span class="feature-name-short">Auth System</span>
+                <div class="feature-progress-bar">
+                  <mat-progress-bar mode="determinate" [value]="100" color="primary"></mat-progress-bar>
+                  <span class="progress-percent">100%</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="feature-item completed">
+              <mat-icon class="feature-status">check_circle</mat-icon>
+              <div class="feature-info">
+                <span class="feature-name-full">Employee Management System</span>
+                <span class="feature-name-short">Employee Mgmt</span>
+                <div class="feature-progress-bar">
+                  <mat-progress-bar mode="determinate" [value]="100" color="primary"></mat-progress-bar>
+                  <span class="progress-percent">100%</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="feature-item completed">
+              <mat-icon class="feature-status">check_circle</mat-icon>
+              <div class="feature-info">
+                <span class="feature-name-full">Department Administration</span>
+                <span class="feature-name-short">Departments</span>
+                <div class="feature-progress-bar">
+                  <mat-progress-bar mode="determinate" [value]="100" color="primary"></mat-progress-bar>
+                  <span class="progress-percent">100%</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="feature-item in-progress">
+              <mat-icon class="feature-status">schedule</mat-icon>
+              <div class="feature-info">
+                <span class="feature-name-full">Document Management System</span>
+                <span class="feature-name-short">Documents</span>
+                <div class="feature-progress-bar">
+                  <mat-progress-bar mode="determinate" [value]="30" color="accent"></mat-progress-bar>
+                  <span class="progress-percent">30%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
