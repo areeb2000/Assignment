@@ -1,0 +1,12 @@
+{
+  "build": {
+    "env": {
+      "NODE_VERSION": "18"
+    }
+  },
+  "install": {
+    "env": {
+      "NODE_VERSION": "18"
+    }
+  }
+}
